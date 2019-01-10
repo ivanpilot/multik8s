@@ -24,7 +24,7 @@ after_success:
     - docker push ivanpilot/worker
 
 deploy:
-    provider: elasticbeankstalk
+    provider: elasticbeanstalk
     region: eu-west-2
     app: fibonacci
     env: Fibonacci-env
