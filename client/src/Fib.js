@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 class Fib extends React.Component {
     state = {
@@ -8,42 +9,52 @@ class Fib extends React.Component {
     };
 
     componentDidMount() {
-        this.fetchValue();
+        this.fetchValues();
         this.fetchIndexes();
     }
 
-    async fetchValue() {
-        //const values = await fetch('/api/values/current');
-        const values = {1: 1, 2: 2}
-        this.setState({
-            values: values.data
-        });
+    async fetchValues() {
+        //try {
+            const values = await axios.get('/api/values/current')
+            //const myValues = await response.json()
+            //const values = JSON.stringify(myValues)
+
+            this.setState({
+                values: values.data
+            });
+        //}
+        //catch (e) {
+        //    console.log(e)
+        //}
     }
 
     async fetchIndexes() {
-        //const seenIndexes = await fetch('/api/values/all');
-        const seenIndexes = {
-            data: [
-                { number: 1, value: 1},
-                { number: 2, value: 2}
-            ]
-        }
-        this.setState({
-            seenIndexes: seenIndexes.data
-        })
+        //try {
+            const seenIndexes = await axios.get('/api/values/all')
+            //const seenIndexes = await response.json()
+        
+            this.setState({
+                seenIndexes: seenIndexes.data
+            })
+        //}
+        //catch (e) {
+        //    console.log(e)
+        //}
     }
 
     handleSubmit = async (event) => {
         event.preventDefault();
 
-        await fetch({
-            method: 'POST',
-            url: '/api/values',
-            body: JSON.stringify({
-                index: this.state.index
-            })
-        })
-
+        //await fetch({
+        //    method: 'POST',
+        //    url: '/api/values',
+        //    body: JSON.stringify({
+        //        index: this.state.index
+        //    })
+        //})
+        await axios.post('/api/values', {
+            index: this.state.index
+        });
         this.setState({index: ''})
     }
 
@@ -57,7 +68,7 @@ class Fib extends React.Component {
         for(let key in this.state.values) {
             entries.push(
                 <div key={key}>
-                    For index {key} I calculated {this.state.values[{key}]}
+                    For index {key} I calculated {this.state.values[key]}
                 </div>
             )
         }
