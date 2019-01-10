@@ -23,3 +23,15 @@ after_success:
     - docker push ivanpilot/server
     - docker push ivanpilot/worker
 
+deploy:
+    provider: elasticbeankstalk
+    region: eu-west-2
+    app: fibonacci
+    env: Fibonacci-env
+    bucket_name: elasticbeanstalk-eu-west-2-660931516180
+    bucket_path: docker-fibonacci
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: 
+        secure: $AWS_SECRET_KEY
