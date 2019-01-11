@@ -2,60 +2,54 @@ import React from 'react';
 import axios from 'axios';
 
 class Fib extends React.Component {
-    state = {
-        seenIndexes: [],
-        values: {},
-        index: '',
+    constructor(props) {
+        super(props);
+        this.state = {
+            seenIndexes: [],
+            values: {},
+            index: '',
+        };
+        this.interval = null;
     };
 
     componentDidMount() {
+        this.fetchUpdate();
+        this.interval = setInterval(() => {
+            this.forceUpdate(this.fetchUpdate)
+        }, 500);
+        //this.fetchValues();
+        //this.fetchIndexes();
+    }
+
+    fetchUpdate() {
         this.fetchValues();
         this.fetchIndexes();
     }
 
-    async fetchValues() {
-        //try {
-            const values = await axios.get('/api/values/current')
-            //const myValues = await response.json()
-            //const values = JSON.stringify(myValues)
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
 
-            this.setState({
-                values: values.data
-            });
-        //}
-        //catch (e) {
-        //    console.log(e)
-        //}
+    async fetchValues() {
+        const values = await axios.get('/api/values/current')
+        this.setState({
+            values: values.data
+        });
     }
 
     async fetchIndexes() {
-        //try {
-            const seenIndexes = await axios.get('/api/values/all')
-            //const seenIndexes = await response.json()
-        
-            this.setState({
-                seenIndexes: seenIndexes.data
-            })
-        //}
-        //catch (e) {
-        //    console.log(e)
-        //}
+        const seenIndexes = await axios.get('/api/values/all')
+        this.setState({
+            seenIndexes: seenIndexes.data
+        })
     }
 
     handleSubmit = async (event) => {
         event.preventDefault();
-
-        //await fetch({
-        //    method: 'POST',
-        //    url: '/api/values',
-        //    body: JSON.stringify({
-        //        index: this.state.index
-        //    })
-        //})
         await axios.post('/api/values', {
             index: this.state.index
         });
-        this.setState({index: ''})
+        this.setState({index: ''});
     }
 
     renderSeenIndexes() {
