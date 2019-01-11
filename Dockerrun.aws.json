@@ -27,7 +27,7 @@
             "image": "ivanpilot/nginx",
             "hostname": "nginx",
             "essential": true,
-            "portMapping": [
+            "portMappings": [
                 {
                     "hostPort": 80,
                     "containerPort": 80
