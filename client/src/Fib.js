@@ -2,14 +2,10 @@ import React from 'react';
 import axios from 'axios';
 
 class Fib extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            seenIndexes: [],
-            values: {},
-            index: '',
-        };
-        this.interval = null;
+    state = {
+        seenIndexes: [],
+        values: {},
+        index: '',
     };
 
     componentDidMount() {
