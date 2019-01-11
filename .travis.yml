@@ -29,7 +29,7 @@ deploy:
     app: fibonacci
     env: Fibonacci-env
     bucket_name: elasticbeanstalk-eu-west-2-660931516180
-    bucket_path: docker-fibonacci
+    bucket_path: fibonacci
     on:
         branch: master
     access_key_id: $AWS_ACCESS_KEY
