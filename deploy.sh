@@ -1,5 +1,5 @@
 docker build -t ivanpilot/multi-client:latest -t ivanpilot/multi-client:$SHA -f ./client/Dockerfile ./client
-docker build -t ivanpilot/multi-server:latest ivanpilot/multi-server:$SHA -f ./server/Dockerfile ./server
+docker build -t ivanpilot/multi-server:latest -t ivanpilot/multi-server:$SHA -f ./server/Dockerfile ./server
 docker build -t ivanpilot/multi-worker:latest -t ivanpilot/multi-worker:$SHA -f ./worker/Dockerfile ./worker
 
 # no need to login inside docker since we are already logged in through the .travis.yaml file that will execute before this file execute
