@@ -1,50 +1,27 @@
 sudo: required
 services:
-    - docker #we need docker installed as soon as we try to run our build because we need travis to build our images and push them onto docker hub
+  - docker
 env:
-    global:
-        - SHA=$(git rev-parse HEAD)
-          #this is to use the git sha as a unique identifier for the version of our image when apply kubernetes/docker
-        - CLOUDSDK_CORE_DISABLE_PROMPTS=1
-          #this is to make sure that google will not generate any popup waiting for us to confirm. since we programmatically configure the deployment, we would not be able to deal with popup
+  global:
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
-    - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
-    # the next 2 lines allows to set up google cloud on our local machine
-    - curl https://sdk.cloud.google.com | bash > /dev/null; 
-    # left of pipe will dl the google could sdk 
-    # right of pipe will install the sdk locally on our instance assigned to us by travis CI
-    - source $HOME/google-cloud-sdk/path.bash.inc
-    # will look at the default installed directory of google cloud sdk which is by default at 'home/google-cloud-sdk' and is going to source the file called path.bash.inc
-    # it means there is additional config to modify our shell and we are going to apply that additional config trhough the source command
-    
-    # then we want google cloud to install kubectl cmd.
-    - gcloud components update kubectl # this install and update kubectl inside our Travis environment
-
-    # now we need to do some authorisations setup for google
-    - gcloud auth activate-service-account --key-file service-account.json
-    # the service account in google is equivalent to AIM system used for AWS elastikbeanStalk
-    # we need to create a service account in google -> it will give us the json file
-    # we need to encrypt the file and pass it to Travis -> so we need to dl and install Travis CLI
-    # finally inside travis.yaml, we need to take that file, unencrypt it and take this json file and take it to google could sdk
-    # this last step is done by the above line of code
-
-    #below are other config to specify to google cloud
-    - gcloud config set project multi-k8s-230018
-    - gcloud config set compute/zone europe-west1-b
-    - gcloud container clusters get-credentials multi-cluster     
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    #login to docker cli from travis.yaml file. We have access to docker because we reference it as a service at the top of the file
-    #the above commande assumes that we have already define DOCKER_PASSWORD and DOCKER_USERNAME as environment variables. this has to be define inside our travis instance through their website
-
-    - docker build -t ivanpilot/react-test -f ./client/Dockerfile.dev ./client
-    #we use the Dockerfile.dev because this is the version that will run our tests 
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
+  - gcloud config set project multi-k8s-230018
+  - gcloud config set compute/zone europe-west1-b	
+  - gcloud container clusters get-credentials multi-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t ivanpilot/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-    - docker run ivanpilot/react-test npm test -- --coverage
-    #remember that the coverage flag is to indicated travis when the test are completed otherwise travis will just hang on indefinitely
+  - docker run ivanpilot/react-test npm test -- --coverage
 
 deploy:
-    provider: script #tells Travis to run the script that we will provide ourselves for the deployment
-    script: bash ./deploy.sh #this is our script to Travis
-    on: 
-        branch: master
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
