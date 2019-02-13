@@ -9,22 +9,9 @@ class Fib extends React.Component {
     };
 
     componentDidMount() {
-        //this.fetchUpdate();
-        //this.interval = setInterval(() => {
-        //    this.forceUpdate(this.fetchUpdate)
-        //}, 500);
         this.fetchValues();
         this.fetchIndexes();
     }
-
-    //fetchUpdate() {
-    //    this.fetchValues();
-    //    this.fetchIndexes();
-    //}
-
-    //componentWillUnmount() {
-    //    clearInterval(this.interval);
-    //}
 
     fetchValues = async () => {
         const values = await axios.get('/api/values/current')
